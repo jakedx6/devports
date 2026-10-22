@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Open the devports TUI in a terminal window, or focus the one that's already open.
+# It floats, centred and sized for its columns, without any Hyprland config; pass --tile to tile it.
+set -euo pipefail
+
+app_id=org.omarchy.devports
+devports="$(dirname "$(realpath "${BASH_SOURCE[0]}")")/devports"
+size="${DEVPORTS_WINDOW_SIZE:-1280 760}"
+
+addr=$(hyprctl clients -j 2>/dev/null | jq -r --arg c "$app_id" '.[] | select(.class == $c) | .address' | head -n1)
+if [[ -n $addr ]]; then
+  hyprctl dispatch "hl.dsp.focus({ window = \"address:$addr\" })" >/dev/null 2>&1 ||
+    hyprctl dispatch focuswindow "address:$addr" >/dev/null
+  exit 0
+fi
+
+# Hyprland runs the command itself, so pass DEVPORTS_ROOTS along explicitly.
+roots=""
+[[ -n ${DEVPORTS_ROOTS:-} ]] && roots="env DEVPORTS_ROOTS=$(printf '%q' "$DEVPORTS_ROOTS") "
+cmd="uwsm-app -- xdg-terminal-exec --app-id=$app_id -e $roots$(printf '%q' "$devports")"
+if [[ ${1:-} != --tile ]]; then
+  read -r w h <<<"$size"
+  lua_cmd=${cmd//\\/\\\\}
+  lua_cmd=${lua_cmd//\"/\\\"}
+  # Lua config (Hyprland 0.55+), then the older hyprlang syntax. Either prints "ok" on success.
+  [[ $(hyprctl dispatch "hl.dsp.exec_cmd(\"$lua_cmd\", { float = true, center = true, size = { $w, $h } })" 2>&1) == ok ]] && exit 0
+  [[ $(hyprctl dispatch exec "[float; center; size $w $h] $cmd" 2>&1) == ok ]] && exit 0
+fi
+eval exec setsid "$cmd"

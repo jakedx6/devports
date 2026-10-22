@@ -1,0 +1,23 @@
+[project]
+name = "devports"
+version = "0.1.0"
+description = "TUI for local dev servers and Docker containers: ports, CPU, memory, stop/kill."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [{ name = "Jake Smith" }]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/jakedx6/devports"
+Issues = "https://github.com/jakedx6/devports/issues"
+
+[project.scripts]
+devports = "devports.__main__:main"
+
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["devports"]

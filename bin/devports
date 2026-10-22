@@ -1,0 +1,9 @@
+#!/usr/bin/python3
+# System python on purpose: the Omarchy menu's PATH puts mise shims first.
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+from devports.__main__ import main  # noqa: E402
+
+sys.exit(main())

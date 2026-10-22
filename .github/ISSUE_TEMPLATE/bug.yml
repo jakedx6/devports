@@ -1,0 +1,31 @@
+name: Bug report
+description: Something is missing, grouped wrong, named badly, or broken
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you ran or clicked, what you expected, and what you saw instead.
+    validations:
+      required: true
+  - type: textarea
+    id: list
+    attributes:
+      label: devports list output
+      description: |
+        Output of `devports list --json -a` (or `devports list -d 2 -a`) for the case that's wrong.
+        Remove anything private, like project names or paths, first.
+      render: shell
+  - type: input
+    id: omarchy
+    attributes:
+      label: Omarchy version
+      description: Output of `omarchy version`
+  - type: dropdown
+    id: install
+    attributes:
+      label: Installed as
+      options:
+        - Omarchy plugin
+        - Clone + install.sh
